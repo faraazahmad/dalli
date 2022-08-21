@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'rack/session/abstract/id'
-require 'dalli'
-require 'connection_pool'
-require 'English'
+require "rack/session/abstract/id"
+require "dalli"
+require "connection_pool"
+require "English"
 
 module Rack
   module Session
@@ -12,9 +12,8 @@ module Rack
       attr_reader :data
 
       # Don't freeze this until we fix the specs/implementation
-      # rubocop:disable Style/MutableConstant
       DEFAULT_DALLI_OPTIONS = {
-        namespace: 'rack:session'
+        namespace: "rack:session"
       }
       # rubocop:enable Style/MutableConstant
 
@@ -146,7 +145,7 @@ module Rack
       end
 
       def extract_dalli_options(options)
-        raise 'Rack::Session::Dalli no longer supports the :cache option.' if options[:cache]
+        raise "Rack::Session::Dalli no longer supports the :cache option." if options[:cache]
 
         client_options = retrieve_client_options(options)
         server_configurations = client_options.delete(:memcache_server)
@@ -168,10 +167,10 @@ module Rack
       end
 
       def ensure_connection_pool_added!
-        require 'connection_pool'
+        require "connection_pool"
       rescue LoadError => e
         warn "You don't have connection_pool installed in your application. " \
-             'Please add it to your Gemfile and run bundle install'
+             "Please add it to your Gemfile and run bundle install"
         raise e
       end
 

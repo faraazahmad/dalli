@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'digest/md5'
-require 'set'
+require "digest/md5"
+require "set"
 
 # encoding: ascii
 module Dalli
@@ -195,7 +195,7 @@ module Dalli
       @ring&.pipeline_consume_and_ignore_responses
       Thread.current[::Dalli::QUIET] = old
     end
-    alias multi quiet
+    alias_method :multi, :quiet
 
     def set(key, value, ttl = nil, req_options = nil)
       set_cas(key, value, 0, ttl, req_options)
@@ -302,7 +302,7 @@ module Dalli
     def flush(delay = 0)
       ring.servers.map { |s| s.request(:flush, delay) }
     end
-    alias flush_all flush
+    alias_method :flush_all, :flush
 
     ALLOWED_STAT_KEYS = %i[items slabs settings].freeze
 
@@ -340,7 +340,7 @@ module Dalli
     ##
     ## Make sure memcache servers are alive, or raise an Dalli::RingError
     def alive!
-      ring.server_for_key('')
+      ring.server_for_key("")
     end
 
     ##
@@ -350,9 +350,9 @@ module Dalli
       @ring&.close
       @ring = nil
     end
-    alias reset close
+    alias_method :reset, :close
 
-    CACHE_NILS = { cache_nils: true }.freeze
+    CACHE_NILS = {cache_nils: true}.freeze
 
     def not_found?(val)
       cache_nils ? val == ::Dalli::NOT_FOUND : val.nil?
@@ -397,11 +397,11 @@ module Dalli
 
     def protocol_implementation
       @protocol_implementation ||= case @options[:protocol]&.to_s
-                                   when 'meta'
-                                     Dalli::Protocol::Meta
-                                   else
-                                     Dalli::Protocol::Binary
-                                   end
+      when "meta"
+        Dalli::Protocol::Meta
+      else
+        Dalli::Protocol::Binary
+      end
     end
 
     ##
@@ -426,7 +426,7 @@ module Dalli
       server.request(op, key, *args)
     rescue NetworkError => e
       Dalli.logger.debug { e.inspect }
-      Dalli.logger.debug { 'retrying request with new server' }
+      Dalli.logger.debug { "retrying request with new server" }
       retry
     end
 

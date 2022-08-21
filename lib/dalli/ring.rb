@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'digest/sha1'
-require 'zlib'
+require "digest/sha1"
+require "zlib"
 
 module Dalli
   ##
@@ -36,16 +36,16 @@ module Dalli
 
     def server_for_key(key)
       server = if @continuum
-                 server_from_continuum(key)
-               else
-                 @servers.first
-               end
+        server_from_continuum(key)
+      else
+        @servers.first
+      end
 
       # Note that the call to alive? has the side effect of initializing
       # the socket
       return server if server&.alive?
 
-      raise Dalli::RingError, 'No server available'
+      raise Dalli::RingError, "No server available"
     end
 
     def server_from_continuum(key)

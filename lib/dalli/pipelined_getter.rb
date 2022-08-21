@@ -23,7 +23,7 @@ module Dalli
       end
     rescue NetworkError => e
       Dalli.logger.debug { e.inspect }
-      Dalli.logger.debug { 'retrying pipelined gets because of timeout' }
+      Dalli.logger.debug { "retrying pipelined gets because of timeout" }
       retry
     end
 
@@ -168,7 +168,7 @@ module Dalli
       if (unfound_keys = groups.delete(nil))
         Dalli.logger.debug do
           "unable to get keys for #{unfound_keys.length} keys " \
-            'because no matching server was found'
+            "because no matching server was found"
         end
       end
       groups

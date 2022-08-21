@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'English'
-require 'socket'
-require 'timeout'
+require "English"
+require "socket"
+require "timeout"
 
 module Dalli
   module Protocol
@@ -64,8 +64,8 @@ module Dalli
         return true unless time_to_next_reconnect.positive?
 
         Dalli.logger.debug do
-          format('down_retry_delay not reached for %<name>s (%<time>.3f seconds left)', name: name,
-                                                                                        time: time_to_next_reconnect)
+          format("down_retry_delay not reached for %<name>s (%<time>.3f seconds left)", name: name,
+            time: time_to_next_reconnect)
         end
         false
       end
@@ -96,7 +96,7 @@ module Dalli
       end
 
       def confirm_ready!
-        error_on_request!(RuntimeError.new('Already writing to socket')) if request_in_progress?
+        error_on_request!(RuntimeError.new("Already writing to socket")) if request_in_progress?
         close_on_fork if fork_detected?
       end
 
@@ -105,7 +105,7 @@ module Dalli
 
         begin
           @sock.close
-        rescue StandardError
+        rescue
           nil
         end
         @sock = nil
@@ -136,7 +136,7 @@ module Dalli
       def read_line
         start_request!
         data = @sock.gets("\r\n")
-        error_on_request!('EOF in read_line') if data.nil?
+        error_on_request!("EOF in read_line") if data.nil?
         finish_request!
         data
       rescue SystemCallError, Timeout::Error, EOFError => e
@@ -182,7 +182,7 @@ module Dalli
         else
           # Closes the existing socket, setting up for a reconnect
           # on next request
-          reconnect!('Socket operation failed, retrying...')
+          reconnect!("Socket operation failed, retrying...")
         end
       end
 
@@ -217,7 +217,7 @@ module Dalli
       end
 
       def close_on_fork
-        message = 'Fork detected, re-connecting child process...'
+        message = "Fork detected, re-connecting child process..."
         Dalli.logger.info { message }
         # Close socket on a fork, setting us up for reconnect
         # on next request.
@@ -234,7 +234,7 @@ module Dalli
 
         if @down_at
           time = Time.now - @down_at
-          Dalli.logger.debug { format('%<name>s is still down (for %<time>.3f seconds now)', name: name, time: time) }
+          Dalli.logger.debug { format("%<name>s is still down (for %<time>.3f seconds now)", name: name, time: time) }
         else
           @down_at = @last_down_at
           Dalli.logger.warn("#{name} is down")
@@ -245,7 +245,7 @@ module Dalli
         return unless @down_at
 
         time = Time.now - @down_at
-        Dalli.logger.warn { format('%<name>s is back (downtime was %<time>.3f seconds)', name: name, time: time) }
+        Dalli.logger.warn { format("%<name>s is back (downtime was %<time>.3f seconds)", name: name, time: time) }
       end
     end
   end

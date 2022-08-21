@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'digest/md5'
+require "digest/md5"
 
 module Dalli
   ##
@@ -12,10 +12,10 @@ module Dalli
   class KeyManager
     MAX_KEY_LENGTH = 250
 
-    NAMESPACE_SEPARATOR = ':'
+    NAMESPACE_SEPARATOR = ":"
 
     # This is a hard coded md5 for historical reasons
-    TRUNCATED_KEY_SEPARATOR = ':md5:'
+    TRUNCATED_KEY_SEPARATOR = ":md5:"
 
     # This is 249 for historical reasons
     TRUNCATED_KEY_TARGET_SIZE = 249
@@ -48,7 +48,7 @@ module Dalli
     # combined with a 32-byte hex digest of the whole key.
     ##
     def validate_key(key)
-      raise ArgumentError, 'key cannot be blank' unless key&.length&.positive?
+      raise ArgumentError, "key cannot be blank" unless key&.length&.positive?
 
       key = key_with_namespace(key)
       key.length > MAX_KEY_LENGTH ? truncated_key(key) : key
@@ -67,7 +67,7 @@ module Dalli
     def key_without_namespace(key)
       return key if namespace.nil?
 
-      key.sub(namespace_regexp, '')
+      key.sub(namespace_regexp, "")
     end
 
     def digest_class
@@ -83,7 +83,7 @@ module Dalli
     def validate_digest_class_option(opts)
       return if opts[:digest_class].respond_to?(:hexdigest)
 
-      raise ArgumentError, 'The digest_class object must respond to the hexdigest method'
+      raise ArgumentError, "The digest_class object must respond to the hexdigest method"
     end
 
     def namespace_from_options

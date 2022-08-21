@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'ruby-prof'
-require_relative 'helper'
-require 'benchmark'
+require "ruby-prof"
+require_relative "helper"
+require "benchmark"
 
 def profile(&block)
-  return yield unless ENV['PROFILE']
+  return yield unless ENV["PROFILE"]
 
   prof = RubyProf::Profile.new
   result = prof.profile(&block)
   rep = RubyProf::GraphHtmlPrinter.new(result)
-  file = File.new('profile.html', 'w')
+  file = File.new("profile.html", "w")
   rep.print(file)
   file.close
 end
 
-describe 'performance' do
+describe "performance" do
   before do
     puts "Testing #{Dalli::VERSION} with #{RUBY_DESCRIPTION}"
     # We'll use a simple @value to try to avoid spending time in Marshal,
@@ -25,17 +25,17 @@ describe 'performance' do
 
     @port = 23_417
     @servers = ["127.0.0.1:#{@port}", "localhost:#{@port}"]
-    @key1 = 'Short'
-    @key2 = 'Sym1-2-3::45' * 8
-    @key3 = 'Long' * 40
-    @key4 = 'Medium' * 8
+    @key1 = "Short"
+    @key2 = "Sym1-2-3::45" * 8
+    @key3 = "Long" * 40
+    @key4 = "Medium" * 8
     # 5 and 6 are only used for multiget miss test
-    @key5 = 'Medium2' * 8
-    @key6 = 'Long3' * 40
-    @counter = 'counter'
+    @key5 = "Medium2" * 8
+    @key6 = "Long3" * 40
+    @counter = "counter"
   end
 
-  it 'runs benchmarks' do
+  it "runs benchmarks" do
     protocol = :binary
     memcached(protocol, @port) do
       profile do
@@ -43,7 +43,7 @@ describe 'performance' do
           n = 2500
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('set:plain:dalli') do
+          x.report("set:plain:dalli") do
             n.times do
               @m.set @key1, @marshalled, 0, raw: true
               @m.set @key2, @marshalled, 0, raw: true
@@ -55,7 +55,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('setq:plain:dalli') do
+          x.report("setq:plain:dalli") do
             @m.multi do
               n.times do
                 @m.set @key1, @marshalled, 0, raw: true
@@ -69,7 +69,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('set:ruby:dalli') do
+          x.report("set:ruby:dalli") do
             n.times do
               @m.set @key1, @value
               @m.set @key2, @value
@@ -81,7 +81,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('get:plain:dalli') do
+          x.report("get:plain:dalli") do
             n.times do
               @m.get @key1, raw: true
               @m.get @key2, raw: true
@@ -93,7 +93,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('get:ruby:dalli') do
+          x.report("get:ruby:dalli") do
             n.times do
               @m.get @key1
               @m.get @key2
@@ -105,7 +105,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('multiget:ruby:dalli') do
+          x.report("multiget:ruby:dalli") do
             n.times do
               # We don't use the keys array because splat is slow
               @m.get_multi @key1, @key2, @key3, @key4, @key5, @key6
@@ -113,21 +113,20 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          # rubocop:disable Lint/SuppressedException
-          x.report('missing:ruby:dalli') do
+          x.report("missing:ruby:dalli") do
             n.times do
-              begin @m.delete @key1; rescue StandardError; end
-              begin @m.get @key1; rescue StandardError; end
-              begin @m.delete @key2; rescue StandardError; end
-              begin @m.get @key2; rescue StandardError; end
-              begin @m.delete @key3; rescue StandardError; end
-              begin @m.get @key3; rescue StandardError; end
+              begin @m.delete @key1; rescue; end
+              begin @m.get @key1; rescue; end
+              begin @m.delete @key2; rescue; end
+              begin @m.get @key2; rescue; end
+              begin @m.delete @key3; rescue; end
+              begin @m.get @key3; rescue; end
             end
           end
           # rubocop:enable Lint/SuppressedException
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('mixed:ruby:dalli') do
+          x.report("mixed:ruby:dalli") do
             n.times do
               @m.set @key1, @value
               @m.set @key2, @value
@@ -145,7 +144,7 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('mixedq:ruby:dalli') do
+          x.report("mixedq:ruby:dalli") do
             n.times do
               @m.multi do
                 @m.set @key1, @value
@@ -174,8 +173,8 @@ describe 'performance' do
           end
 
           @m = Dalli::Client.new(@servers, protocol: protocol)
-          x.report('incr:ruby:dalli') do
-            counter = 'foocount'
+          x.report("incr:ruby:dalli") do
+            counter = "foocount"
             n.times do
               @m.incr counter, 1, 0, 1
             end

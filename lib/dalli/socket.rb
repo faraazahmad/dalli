@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'openssl'
-require 'rbconfig'
+require "openssl"
+require "rbconfig"
 
 module Dalli
   ##
@@ -13,7 +13,7 @@ module Dalli
     ##
     module InstanceMethods
       def readfull(count)
-        value = +''
+        value = +""
         loop do
           result = read_nonblock(count - value.bytesize, exception: false)
           value << result if append_to_buffer?(result)
@@ -23,7 +23,7 @@ module Dalli
       end
 
       def read_available
-        value = +''
+        value = +""
         loop do
           result = read_nonblock(8196, exception: false)
           break if WAIT_RCS.include?(result)
@@ -91,7 +91,7 @@ module Dalli
       def self.open(host, port, options = {})
         Timeout.timeout(options[:socket_timeout]) do
           sock = new(host, port)
-          sock.options = { host: host, port: port }.merge(options)
+          sock.options = {host: host, port: port}.merge(options)
           init_socket_options(sock, options)
 
           options[:ssl_context] ? wrapping_ssl_socket(sock, host, options[:ssl_context]) : sock
@@ -114,13 +114,13 @@ module Dalli
       end
     end
 
-    if /mingw|mswin/.match?(RbConfig::CONFIG['host_os'])
+    if /mingw|mswin/.match?(RbConfig::CONFIG["host_os"])
       ##
       # UNIX domain sockets are not supported on Windows platforms.
       ##
       class UNIX
         def initialize(*_args)
-          raise Dalli::DalliError, 'Unix sockets are not supported on Windows platform.'
+          raise Dalli::DalliError, "Unix sockets are not supported on Windows platform."
         end
       end
     else
@@ -140,7 +140,7 @@ module Dalli
         def self.open(path, options = {})
           Timeout.timeout(options[:socket_timeout]) do
             sock = new(path)
-            sock.options = { path: path }.merge(options)
+            sock.options = {path: path}.merge(options)
             sock
           end
         end

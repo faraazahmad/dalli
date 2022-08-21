@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'socket'
-require_relative '../utils/certificate_generator'
-require_relative '../utils/memcached_manager'
-require_relative '../utils/memcached_mock'
+require "socket"
+require_relative "../utils/certificate_generator"
+require_relative "../utils/memcached_manager"
+require_relative "../utils/memcached_mock"
 
 module Memcached
   module Helper
@@ -36,7 +36,7 @@ module Memcached
     # client_options - Options passed to the Dalli::Client on initialization
     # terminate_process - whether to terminate the memcached process on
     #                     exiting the block
-    def memcached(protocol, port_or_socket, args = '', client_options = {}, terminate_process: true)
+    def memcached(protocol, port_or_socket, args = "", client_options = {}, terminate_process: true)
       dc = MemcachedManager.start_and_flush_with_retry(port_or_socket, args, client_options.merge(protocol: protocol))
       yield dc, port_or_socket if block_given?
       memcached_kill(port_or_socket) if terminate_process
@@ -45,8 +45,7 @@ module Memcached
     # Launches a memcached process using the memcached method in this module,
     # but sets terminate_process to false ensuring that the process persists
     # past execution of the block argument.
-    # rubocop:disable Metrics/ParameterLists
-    def memcached_persistent(protocol = :binary, port_or_socket = 21_345, args = '', client_options = {}, &block)
+    def memcached_persistent(protocol = :binary, port_or_socket = 21_345, args = "", client_options = {}, &block)
       memcached(protocol, port_or_socket, args, client_options, terminate_process: false, &block)
     end
     # rubocop:enable Metrics/ParameterLists
@@ -54,10 +53,10 @@ module Memcached
     # Launches a persistent memcached process, configured to use SSL
     def memcached_ssl_persistent(protocol = :binary, port_or_socket = rand(21_397..21_896), &block)
       memcached_persistent(protocol,
-                           port_or_socket,
-                           CertificateGenerator.ssl_args,
-                           { ssl_context: CertificateGenerator.ssl_context },
-                           &block)
+        port_or_socket,
+        CertificateGenerator.ssl_args,
+        {ssl_context: CertificateGenerator.ssl_context},
+        &block)
     end
 
     # Kills the memcached process that was launched using this helper on hte
@@ -68,19 +67,19 @@ module Memcached
 
     # Launches a persistent memcached process, configured to use SASL authentication
     def memcached_sasl_persistent(port_or_socket = 21_398, &block)
-      memcached_persistent(:binary, port_or_socket, '-S', sasl_credentials, &block)
+      memcached_persistent(:binary, port_or_socket, "-S", sasl_credentials, &block)
     end
 
     # The SASL credentials used for the test SASL server
     def sasl_credentials
-      { username: 'testuser', password: 'testtest' }
+      {username: "testuser", password: "testtest"}
     end
 
     private
 
     def fork_mock_process(prc, meth, meth_args)
       fork do
-        trap('TERM') { exit }
+        trap("TERM") { exit }
         MemcachedMock.send(meth, *meth_args) { |*args| prc.call(*args) }
       end
     end
@@ -88,7 +87,7 @@ module Memcached
     def kill_process(pid)
       return unless pid
 
-      Process.kill('TERM', pid)
+      Process.kill("TERM", pid)
       Process.wait(pid)
     end
 

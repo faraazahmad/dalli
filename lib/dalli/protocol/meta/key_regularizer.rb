@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'base64'
+require "base64"
 
 module Dalli
   module Protocol
@@ -23,7 +23,7 @@ module Dalli
         def self.decode(encoded_key, base64_encoded)
           return encoded_key unless base64_encoded
 
-          Base64.strict_decode64(encoded_key).force_encoding('UTF-8')
+          Base64.strict_decode64(encoded_key).force_encoding("UTF-8")
         end
       end
     end

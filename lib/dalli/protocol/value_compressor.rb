@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'English'
+require "English"
 
 module Dalli
   module Protocol
@@ -30,7 +30,7 @@ module Dalli
         # Remove this with 4.0
         if client_options.key?(:compression) && !client_options.key?(:compress)
           Dalli.logger.warn "DEPRECATED: Dalli's :compression option is now just 'compress: true'.  " \
-                            'Please update your configuration.'
+                            "Please update your configuration."
           client_options[:compress] = client_options.delete(:compression)
         end
 

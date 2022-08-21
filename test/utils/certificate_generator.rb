@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
-require 'openssl'
+require "openssl"
 
 ##
 # Utility module for generating certificates used by a local Memcached server
 # exposing a TLS/SSL interface in test.
 ##
 module CertificateGenerator
-  ROOT_CA_PK_PATH = '/tmp/root.key'
-  ROOT_CA_CERT_PATH = '/tmp/root.crt'
+  ROOT_CA_PK_PATH = "/tmp/root.key"
+  ROOT_CA_CERT_PATH = "/tmp/root.crt"
 
-  MEMCACHED_PK_PATH = '/tmp/memcached.key'
-  MEMCACHED_CERT_PATH = '/tmp/memcached.crt'
+  MEMCACHED_PK_PATH = "/tmp/memcached.key"
+  MEMCACHED_CERT_PATH = "/tmp/memcached.crt"
 
   def self.generate
     issuer_cert, issuer_key = generate_root_certificate
@@ -31,20 +31,20 @@ module CertificateGenerator
   def self.ssl_context
     ssl_context = OpenSSL::SSL::SSLContext.new
     ssl_context.ca_file = CertificateGenerator::ROOT_CA_CERT_PATH
-    ssl_context.ssl_version = :TLSv1_2 # rubocop:disable Naming/VariableNumber
+    ssl_context.ssl_version = :TLSv1_2
     ssl_context.verify_hostname = true if ssl_context.respond_to?(:verify_hostname=)
     ssl_context.verify_mode = OpenSSL::SSL::VERIFY_PEER
     ssl_context
   end
 
   def self.generate_server_certificate(issuer_cert, issuer_key)
-    cert, key = generate_certificate_common('/CN=localhost', issuer_cert)
+    cert, key = generate_certificate_common("/CN=localhost", issuer_cert)
     cert.serial = 2
 
     ef = extension_factory(cert, issuer_cert)
-    cert.add_extension(ef.create_extension('subjectAltName', 'DNS:localhost,IP:127.0.0.1', false))
-    cert.add_extension(ef.create_extension('keyUsage', 'digitalSignature', true))
-    cert.sign(issuer_key, OpenSSL::Digest.new('SHA256'))
+    cert.add_extension(ef.create_extension("subjectAltName", "DNS:localhost,IP:127.0.0.1", false))
+    cert.add_extension(ef.create_extension("keyUsage", "digitalSignature", true))
+    cert.sign(issuer_key, OpenSSL::Digest.new("SHA256"))
 
     File.write(MEMCACHED_PK_PATH, key)
     File.write(MEMCACHED_CERT_PATH, cert)
@@ -52,13 +52,13 @@ module CertificateGenerator
   end
 
   def self.generate_root_certificate
-    cert, key = generate_certificate_common('/CN=Dalli CA')
+    cert, key = generate_certificate_common("/CN=Dalli CA")
     cert.serial = 1
 
     ef = extension_factory(cert, cert)
-    cert.add_extension(ef.create_extension('basicConstraints', 'CA:TRUE', true))
-    cert.add_extension(ef.create_extension('keyUsage', 'keyCertSign, cRLSign', true))
-    cert.sign(key, OpenSSL::Digest.new('SHA256'))
+    cert.add_extension(ef.create_extension("basicConstraints", "CA:TRUE", true))
+    cert.add_extension(ef.create_extension("keyUsage", "keyCertSign, cRLSign", true))
+    cert.sign(key, OpenSSL::Digest.new("SHA256"))
     File.write(ROOT_CA_PK_PATH, key)
     File.write(ROOT_CA_CERT_PATH, cert)
     [cert, key]
@@ -68,7 +68,7 @@ module CertificateGenerator
     ef = OpenSSL::X509::ExtensionFactory.new
     ef.subject_certificate = cert
     ef.issuer_certificate = issuer_cert
-    cert.add_extension(ef.create_extension('subjectKeyIdentifier', 'hash', false))
+    cert.add_extension(ef.create_extension("subjectKeyIdentifier", "hash", false))
     ef
   end
 
