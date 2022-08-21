@@ -12,23 +12,23 @@ module Dalli
         # Response codes taken from:
         # https://github.com/memcached/memcached/wiki/BinaryProtocolRevamped#response-status
         RESPONSE_CODES = {
-          0 => 'No error',
-          1 => 'Key not found',
-          2 => 'Key exists',
-          3 => 'Value too large',
-          4 => 'Invalid arguments',
-          5 => 'Item not stored',
-          6 => 'Incr/decr on a non-numeric value',
-          7 => 'The vbucket belongs to another server',
-          8 => 'Authentication error',
-          9 => 'Authentication continue',
-          0x20 => 'Authentication required',
-          0x81 => 'Unknown command',
-          0x82 => 'Out of memory',
-          0x83 => 'Not supported',
-          0x84 => 'Internal error',
-          0x85 => 'Busy',
-          0x86 => 'Temporary failure'
+          0 => "No error",
+          1 => "Key not found",
+          2 => "Key exists",
+          3 => "Value too large",
+          4 => "Invalid arguments",
+          5 => "Item not stored",
+          6 => "Incr/decr on a non-numeric value",
+          7 => "The vbucket belongs to another server",
+          8 => "Authentication error",
+          9 => "Authentication continue",
+          0x20 => "Authentication required",
+          0x81 => "Unknown command",
+          0x82 => "Out of memory",
+          0x83 => "Not supported",
+          0x84 => "Internal error",
+          0x85 => "Busy",
+          0x86 => "Temporary failure"
         }.freeze
 
         def initialize(io_source, value_marshaller)
@@ -49,15 +49,15 @@ module Dalli
         def unpack_response_body(resp_header, body, parse_as_stored_value)
           extra_len = resp_header.extra_len
           key_len = resp_header.key_len
-          bitflags = extra_len.positive? ? body.unpack1('N') : 0x0
-          key = body.byteslice(extra_len, key_len).force_encoding('UTF-8') if key_len.positive?
+          bitflags = extra_len.positive? ? body.unpack1("N") : 0x0
+          key = body.byteslice(extra_len, key_len).force_encoding("UTF-8") if key_len.positive?
           value = body.byteslice((extra_len + key_len)..-1)
           value = parse_as_stored_value ? @value_marshaller.retrieve(value, bitflags) : value
           [key, value]
         end
 
         def read_header
-          read(ResponseHeader::SIZE) || raise(Dalli::NetworkError, 'No response')
+          read(ResponseHeader::SIZE) || raise(Dalli::NetworkError, "No response")
         end
 
         def raise_on_not_ok!(resp_header)
@@ -114,7 +114,7 @@ module Dalli
         # Returns the new value for the key, if found and updated
         def decr_incr
           body = generic_response
-          body ? body.unpack1('Q>') : body
+          body ? body.unpack1("Q>") : body
         end
 
         def stats

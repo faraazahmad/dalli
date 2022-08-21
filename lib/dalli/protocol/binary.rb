@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-require 'socket'
-require 'timeout'
+require "forwardable"
+require "socket"
+require "timeout"
 
 module Dalli
   module Protocol
@@ -66,14 +66,13 @@ module Dalli
         storage_req(opkey, key, value, ttl, cas, options)
       end
 
-      # rubocop:disable Metrics/ParameterLists
       def storage_req(opkey, key, value, ttl, cas, options)
         (value, bitflags) = @value_marshaller.store(key, value, options)
         ttl = TtlSanitizer.sanitize(ttl)
 
         req = RequestFormatter.standard_request(opkey: opkey, key: key,
-                                                value: value, bitflags: bitflags,
-                                                ttl: ttl, cas: cas)
+          value: value, bitflags: bitflags,
+          ttl: ttl, cas: cas)
         write(req)
         response_processor.storage_response unless quiet?
       end
@@ -124,7 +123,7 @@ module Dalli
         expiry = initial ? TtlSanitizer.sanitize(ttl) : NOT_FOUND_EXPIRY
         initial ||= 0
         write(RequestFormatter.decr_incr_request(opkey: opkey, key: key,
-                                                 count: count, initial: initial, expiry: expiry))
+          count: count, initial: initial, expiry: expiry))
         response_processor.decr_incr unless quiet?
       end
 
@@ -142,14 +141,14 @@ module Dalli
         response_processor.consume_all_responses_until_noop
       end
 
-      def stats(info = '')
+      def stats(info = "")
         req = RequestFormatter.standard_request(opkey: :stat, key: info)
         write(req)
         response_processor.stats
       end
 
       def reset_stats
-        write(RequestFormatter.standard_request(opkey: :stat, key: 'reset'))
+        write(RequestFormatter.standard_request(opkey: :stat, key: "reset"))
         response_processor.reset
       end
 
@@ -163,10 +162,10 @@ module Dalli
         write(req)
       end
 
-      require_relative 'binary/request_formatter'
-      require_relative 'binary/response_header'
-      require_relative 'binary/response_processor'
-      require_relative 'binary/sasl_authentication'
+      require_relative "binary/request_formatter"
+      require_relative "binary/response_header"
+      require_relative "binary/response_processor"
+      require_relative "binary/sasl_authentication"
       include SaslAuthentication
     end
   end

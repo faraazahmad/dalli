@@ -15,25 +15,25 @@ module Dalli
 
           # Substitute spaces for the \x00 returned by
           # memcached as a separator for easier
-          content&.tr!("\u0000", ' ')
+          content&.tr!("\u0000", " ")
           mechanisms = content&.split
           [status, mechanisms]
         end
 
-        PLAIN_AUTH = 'PLAIN'
+        PLAIN_AUTH = "PLAIN"
 
         def supported_mechanisms!(mechanisms)
           unless mechanisms.include?(PLAIN_AUTH)
             raise NotImplementedError,
-                  'Dalli only supports the PLAIN authentication mechanism'
+              "Dalli only supports the PLAIN authentication mechanism"
           end
           [PLAIN_AUTH]
         end
 
         def authenticate_with_plain
           write(RequestFormatter.standard_request(opkey: :auth_request,
-                                                  key: PLAIN_AUTH,
-                                                  value: "\x0#{username}\x0#{password}"))
+            key: PLAIN_AUTH,
+            value: "\x0#{username}\x0#{password}"))
           @response_processor.auth_response
         end
 
@@ -41,7 +41,7 @@ module Dalli
           Dalli.logger.info { "Dalli/SASL authenticating as #{username}" }
 
           status, mechanisms = perform_auth_negotiation
-          return Dalli.logger.debug('Authentication not required/supported by server') if status == 0x81
+          return Dalli.logger.debug("Authentication not required/supported by server") if status == 0x81
 
           supported_mechanisms!(mechanisms)
           status, content = authenticate_with_plain
@@ -50,7 +50,7 @@ module Dalli
 
           raise Dalli::DalliError, "Error authenticating: 0x#{status.to_s(16)}" unless status == 0x21
 
-          raise NotImplementedError, 'No two-step authentication mechanisms supported'
+          raise NotImplementedError, "No two-step authentication mechanisms supported"
           # (step, msg) = sasl.receive('challenge', content)
           # raise Dalli::NetworkError, "Authentication failed" if sasl.failed? || step != 'response'
         end

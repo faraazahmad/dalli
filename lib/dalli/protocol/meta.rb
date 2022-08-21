@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-require 'socket'
-require 'timeout'
+require "forwardable"
+require "socket"
+require "timeout"
 
 module Dalli
   module Protocol
@@ -75,14 +75,13 @@ module Dalli
         response_processor.meta_set_with_cas unless quiet?
       end
 
-      # rubocop:disable Metrics/ParameterLists
       def write_storage_req(mode, key, raw_value, ttl = nil, cas = nil, options = {})
         (value, bitflags) = @value_marshaller.store(key, raw_value, options)
         ttl = TtlSanitizer.sanitize(ttl) if ttl
         encoded_key, base64 = KeyRegularizer.encode(key)
         req = RequestFormatter.meta_set(key: encoded_key, value: value,
-                                        bitflags: bitflags, cas: cas,
-                                        ttl: ttl, mode: mode, quiet: quiet?, base64: base64)
+          bitflags: bitflags, cas: cas,
+          ttl: ttl, mode: mode, quiet: quiet?, base64: base64)
         write(req)
       end
       # rubocop:enable Metrics/ParameterLists
@@ -97,12 +96,11 @@ module Dalli
         response_processor.meta_set_append_prepend unless quiet?
       end
 
-      # rubocop:disable Metrics/ParameterLists
       def write_append_prepend_req(mode, key, value, ttl = nil, cas = nil, _options = {})
         ttl = TtlSanitizer.sanitize(ttl) if ttl
         encoded_key, base64 = KeyRegularizer.encode(key)
         req = RequestFormatter.meta_set(key: encoded_key, value: value, base64: base64,
-                                        cas: cas, ttl: ttl, mode: mode, quiet: quiet?)
+          cas: cas, ttl: ttl, mode: mode, quiet: quiet?)
         write(req)
       end
       # rubocop:enable Metrics/ParameterLists
@@ -111,7 +109,7 @@ module Dalli
       def delete(key, cas)
         encoded_key, base64 = KeyRegularizer.encode(key)
         req = RequestFormatter.meta_delete(key: encoded_key, cas: cas,
-                                           base64: base64, quiet: quiet?)
+          base64: base64, quiet: quiet?)
         write(req)
         response_processor.meta_delete unless quiet?
       end
@@ -129,7 +127,7 @@ module Dalli
         ttl = initial ? TtlSanitizer.sanitize(ttl) : nil # Only set a TTL if we want to set a value on miss
         encoded_key, base64 = KeyRegularizer.encode(key)
         write(RequestFormatter.meta_arithmetic(key: encoded_key, delta: delta, initial: initial, incr: incr, ttl: ttl,
-                                               quiet: quiet?, base64: base64))
+          quiet: quiet?, base64: base64))
         response_processor.decr_incr unless quiet?
       end
 
@@ -152,7 +150,7 @@ module Dalli
       end
 
       def reset_stats
-        write(RequestFormatter.stats('reset'))
+        write(RequestFormatter.stats("reset"))
         response_processor.reset
       end
 
@@ -166,12 +164,12 @@ module Dalli
       end
 
       def authenticate_connection
-        raise Dalli::DalliError, 'Authentication not supported for the meta protocol.'
+        raise Dalli::DalliError, "Authentication not supported for the meta protocol."
       end
 
-      require_relative 'meta/key_regularizer'
-      require_relative 'meta/request_formatter'
-      require_relative 'meta/response_processor'
+      require_relative "meta/key_regularizer"
+      require_relative "meta/request_formatter"
+      require_relative "meta/response_processor"
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'uri'
+require "uri"
 
 module Dalli
   module Protocol
@@ -10,7 +10,7 @@ module Dalli
     # socket_type.
     ##
     class ServerConfigParser
-      MEMCACHED_URI_PROTOCOL = 'memcached://'
+      MEMCACHED_URI_PROTOCOL = "memcached://"
 
       # TODO: Revisit this, especially the IP/domain part.  Likely
       # can limit character set to LDH + '.'.  Hex digit section
@@ -40,7 +40,7 @@ module Dalli
         res = deconstruct_string(str)
 
         hostname = normalize_host_from_match(str, res)
-        if hostname.start_with?('/')
+        if hostname.start_with?("/")
           socket_type = :unix
           port, weight = attributes_for_unix_socket(res)
         else
@@ -52,7 +52,7 @@ module Dalli
 
       def self.deconstruct_string(str)
         mtch = str.match(SERVER_CONFIG_REGEXP)
-        raise Dalli::DalliError, "Could not parse hostname #{str}" if mtch.nil? || mtch[1] == '[]'
+        raise Dalli::DalliError, "Could not parse hostname #{str}" if mtch.nil? || mtch[1] == "[]"
 
         mtch
       end
@@ -69,7 +69,7 @@ module Dalli
       end
 
       def self.normalize_host_from_match(str, res)
-        raise Dalli::DalliError, "Could not parse hostname #{str}" if res.nil? || res[1] == '[]'
+        raise Dalli::DalliError, "Could not parse hostname #{str}" if res.nil? || res[1] == "[]"
 
         res[2] || res[1]
       end

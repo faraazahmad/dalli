@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'socket'
-require 'timeout'
+require "socket"
+require "timeout"
 
 module Dalli
   module Protocol
@@ -38,7 +38,7 @@ module Dalli
       # Resets the internal buffer to an empty state,
       # so that we're ready to read pipelined responses
       def reset
-        @buffer = ''.b
+        @buffer = "".b
       end
 
       # Clear the internal response buffer

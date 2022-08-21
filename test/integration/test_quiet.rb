@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../helper'
+require_relative "../helper"
 
-describe 'Quiet behavior' do
+describe "Quiet behavior" do
   MemcachedManager.supported_protocols.each do |p|
     describe "using the #{p} protocol" do
-      it 'supports the use of set in a quiet block' do
+      it "supports the use of set in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -24,7 +24,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of add in a quiet block' do
+      it "supports the use of add in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -50,7 +50,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of replace in a quiet block' do
+      it "supports the use of replace in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -76,7 +76,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of delete in a quiet block' do
+      it "supports the use of delete in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -101,7 +101,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of append in a quiet block' do
+      it "supports the use of append in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -113,7 +113,7 @@ describe 'Quiet behavior' do
             assert Thread.current[::Dalli::QUIET]
 
             # Response should be nil
-            assert_nil dc.append(key, 'abc')
+            assert_nil dc.append(key, "abc")
           end
           refute Thread.current[::Dalli::QUIET]
 
@@ -121,7 +121,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of prepend in a quiet block' do
+      it "supports the use of prepend in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -133,7 +133,7 @@ describe 'Quiet behavior' do
             assert Thread.current[::Dalli::QUIET]
 
             # Response should be nil
-            assert_nil dc.prepend(key, 'abc')
+            assert_nil dc.prepend(key, "abc")
           end
           refute Thread.current[::Dalli::QUIET]
 
@@ -141,7 +141,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of incr in a quiet block' do
+      it "supports the use of incr in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -162,7 +162,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of decr in a quiet block' do
+      it "supports the use of decr in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -182,7 +182,7 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'supports the use of flush in a quiet block' do
+      it "supports the use of flush in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
@@ -199,55 +199,55 @@ describe 'Quiet behavior' do
         end
       end
 
-      it 'does not corrupt the underlying response buffer when a memcached error occurs in a quiet block' do
+      it "does not corrupt the underlying response buffer when a memcached error occurs in a quiet block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
-          dc.set('a', 'av')
-          dc.set('b', 'bv')
-          assert_equal 'av', dc.get('a')
-          assert_equal 'bv', dc.get('b')
+          dc.set("a", "av")
+          dc.set("b", "bv")
+          assert_equal "av", dc.get("a")
+          assert_equal "bv", dc.get("b")
 
           refute Thread.current[::Dalli::QUIET]
           dc.multi do
             assert Thread.current[::Dalli::QUIET]
-            dc.delete('non_existent_key')
+            dc.delete("non_existent_key")
           end
           refute Thread.current[::Dalli::QUIET]
-          assert_equal 'av', dc.get('a')
-          assert_equal 'bv', dc.get('b')
+          assert_equal "av", dc.get("a")
+          assert_equal "bv", dc.get("b")
         end
       end
 
-      it 'raises an error if an invalid operation is used in a multi block' do
+      it "raises an error if an invalid operation is used in a multi block" do
         memcached_persistent(p) do |dc|
           dc.close
           dc.flush
-          dc.set('a', 'av')
-          dc.set('b', 'bv')
-          assert_equal 'av', dc.get('a')
-          assert_equal 'bv', dc.get('b')
+          dc.set("a", "av")
+          dc.set("b", "bv")
+          assert_equal "av", dc.get("a")
+          assert_equal "bv", dc.get("b")
 
           refute Thread.current[::Dalli::QUIET]
           dc.multi do
             assert Thread.current[::Dalli::QUIET]
             assert_raises Dalli::NotPermittedMultiOpError do
-              dc.get('a')
+              dc.get("a")
             end
           end
           refute Thread.current[::Dalli::QUIET]
         end
       end
 
-      describe 'quiet? method' do
-        it 'has protocol instances that respond to quiet?' do
+      describe "quiet? method" do
+        it "has protocol instances that respond to quiet?" do
           memcached_persistent(p) do |dc|
             s = dc.send(:ring).servers.first
             assert_respond_to s, :quiet?
           end
         end
 
-        it 'has protocol instances that respond to multi?' do
+        it "has protocol instances that respond to multi?" do
           memcached_persistent(p) do |dc|
             s = dc.send(:ring).servers.first
             assert_respond_to s, :multi?

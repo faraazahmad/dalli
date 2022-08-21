@@ -8,7 +8,7 @@ module Dalli
       ##
       class ResponseHeader
         SIZE = 24
-        FMT = '@2nCCnNNQ'
+        FMT = "@2nCCnNNQ"
 
         attr_reader :key_len, :extra_len, :data_type, :status, :body_len, :opaque, :cas
 

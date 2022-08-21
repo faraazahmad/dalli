@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'forwardable'
-require 'socket'
-require 'timeout'
+require "forwardable"
+require "socket"
+require "timeout"
 
 module Dalli
   module Protocol
@@ -18,7 +18,7 @@ module Dalli
 
       def_delegators :@value_marshaller, :serializer, :compressor, :compression_min_size, :compress_by_default?
       def_delegators :@connection_manager, :name, :sock, :hostname, :port, :close, :connected?, :socket_timeout,
-                     :socket_type, :up!, :down!, :write, :reconnect_down_server?, :raise_down_error
+        :socket_type, :up!, :down!, :write, :reconnect_down_server?, :raise_down_error
 
       def initialize(attribs, client_options = {})
         hostname, port, socket_type, @weight, user_creds = ServerConfigParser.parse(attribs)
@@ -38,7 +38,7 @@ module Dalli
           raise
         rescue Dalli::DalliError
           raise
-        rescue StandardError => e
+        rescue => e
           log_unexpected_err(e)
           down!
         end
@@ -55,9 +55,11 @@ module Dalli
         false
       end
 
-      def lock!; end
+      def lock!
+      end
 
-      def unlock!; end
+      def unlock!
+      end
 
       # Start reading key/value pairs from this connection. This is usually called
       # after a series of GETKQ commands. A NOOP is sent, and the server begins
@@ -116,7 +118,7 @@ module Dalli
 
         # Closes the connection, which ensures that our connection
         # is in a clean state for future requests
-        @connection_manager.error_on_request!('External timeout')
+        @connection_manager.error_on_request!("External timeout")
       rescue NetworkError
         true
       end
@@ -127,11 +129,11 @@ module Dalli
       end
 
       def username
-        @options[:username] || ENV.fetch('MEMCACHE_USERNAME', nil)
+        @options[:username] || ENV.fetch("MEMCACHE_USERNAME", nil)
       end
 
       def password
-        @options[:password] || ENV.fetch('MEMCACHE_PASSWORD', nil)
+        @options[:password] || ENV.fetch("MEMCACHE_PASSWORD", nil)
       end
 
       def require_auth?
@@ -141,7 +143,7 @@ module Dalli
       def quiet?
         Thread.current[::Dalli::QUIET]
       end
-      alias multi? quiet?
+      alias_method :multi?, :quiet?
 
       # NOTE: Additional public methods should be overridden in Dalli::Threadsafe
 
@@ -202,7 +204,7 @@ module Dalli
       end
 
       def pipelined_get(keys)
-        req = +''
+        req = +""
         keys.each do |key|
           req << quiet_get_request(key)
         end
@@ -224,12 +226,12 @@ module Dalli
       end
 
       def reconnect_on_pipeline_complete!
-        @connection_manager.reconnect! 'pipelined get has completed' if pipeline_complete?
+        @connection_manager.reconnect! "pipelined get has completed" if pipeline_complete?
       end
 
       def log_marshal_err(key, err)
         Dalli.logger.error "Marshalling error for key '#{key}': #{err.message}"
-        Dalli.logger.error 'You are trying to cache a Ruby object which cannot be serialized to memcached.'
+        Dalli.logger.error "You are trying to cache a Ruby object which cannot be serialized to memcached."
       end
 
       def log_unexpected_err(err)

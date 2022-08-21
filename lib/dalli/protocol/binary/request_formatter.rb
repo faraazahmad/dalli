@@ -41,14 +41,14 @@ module Dalli
           auth_continue: 0x22
         }.freeze
 
-        REQ_HEADER_FORMAT = 'CCnCCnNNQ'
+        REQ_HEADER_FORMAT = "CCnCCnNNQ"
 
-        KEY_ONLY = 'a*'
-        TTL_AND_KEY = 'Na*'
-        KEY_AND_VALUE = 'a*a*'
-        INCR_DECR = 'NNNNNa*'
-        TTL_ONLY = 'N'
-        NO_BODY = ''
+        KEY_ONLY = "a*"
+        TTL_AND_KEY = "Na*"
+        KEY_AND_VALUE = "a*a*"
+        INCR_DECR = "NNNNNa*"
+        TTL_ONLY = "N"
+        NO_BODY = ""
 
         BODY_FORMATS = {
           get: KEY_ONLY,
@@ -64,12 +64,12 @@ module Dalli
           auth_request: KEY_AND_VALUE,
           auth_continue: KEY_AND_VALUE,
 
-          set: 'NNa*a*',
-          setq: 'NNa*a*',
-          add: 'NNa*a*',
-          addq: 'NNa*a*',
-          replace: 'NNa*a*',
-          replaceq: 'NNa*a*',
+          set: "NNa*a*",
+          setq: "NNa*a*",
+          add: "NNa*a*",
+          addq: "NNa*a*",
+          replace: "NNa*a*",
+          replaceq: "NNa*a*",
 
           incr: INCR_DECR,
           decr: INCR_DECR,
@@ -88,7 +88,6 @@ module Dalli
         }.freeze
         FORMAT = BODY_FORMATS.transform_values { |v| REQ_HEADER_FORMAT + v; }
 
-        # rubocop:disable Metrics/ParameterLists
         def self.standard_request(opkey:, key: nil, value: nil, opaque: 0, cas: 0, bitflags: nil, ttl: nil)
           extra_len = (bitflags.nil? ? 0 : 4) + (ttl.nil? ? 0 : 4)
           key_len = key.nil? ? 0 : key.bytesize

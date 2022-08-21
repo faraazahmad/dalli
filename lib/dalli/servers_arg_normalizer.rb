@@ -24,8 +24,8 @@ module Dalli
   # ArgumentError is thrown.
   ##
   module ServersArgNormalizer
-    ENV_VAR_NAME = 'MEMCACHE_SERVERS'
-    DEFAULT_SERVERS = ['127.0.0.1:11211'].freeze
+    ENV_VAR_NAME = "MEMCACHE_SERVERS"
+    DEFAULT_SERVERS = ["127.0.0.1:11211"].freeze
 
     ##
     # Normalizes the argument into an array of servers.
@@ -34,7 +34,7 @@ module Dalli
     def self.normalize_servers(arg)
       arg = apply_defaults(arg)
       validate_type(arg)
-      Array(arg).flat_map { |s| s.split(',') }.reject(&:empty?)
+      Array(arg).flat_map { |s| s.split(",") }.reject(&:empty?)
     end
 
     def self.apply_defaults(arg)
@@ -48,7 +48,7 @@ module Dalli
       return if arg.is_a?(Array) && arg.all?(String)
 
       raise ArgumentError,
-            'An explicit servers argument must be a comma separated string or an array containing strings.'
+        "An explicit servers argument must be a comma separated string or an array containing strings."
     end
   end
 end
